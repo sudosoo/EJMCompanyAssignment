@@ -14,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CommonCodeController {
-
     private final CommonCodeService commonCodeService;
+
     /**
      * 코드의 벨류값과 한국어 이름을 넣으면 공용코드를 생성해주는 API입니다.
      * 그룹은 만들때 지정할 수도 있고, 그룹이 존재하지 않는다면 자동으로 그룹을 생성해서 지정 해줍니다.
@@ -113,6 +113,4 @@ public class CommonCodeController {
         var requestDto = new SearchCodeListByGroupNameDto(groupName);
         return ResponseEntity.ok(commonCodeService.searchCodeListByGroupName(requestDto));
     }
-
-
 }
