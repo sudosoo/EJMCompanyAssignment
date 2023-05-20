@@ -16,7 +16,7 @@
 
 - JPA
 
-## 🙋‍♀️ Api Spe
+## 🙋‍♀️ Api Spec
 
 ### 🙋‍♀️ createdCode API
 Post /api/code)
