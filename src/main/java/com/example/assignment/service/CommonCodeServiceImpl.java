@@ -18,28 +18,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class CommonCodeServiceImpl implements CommonCodeService {
-
     private final CommonCodeRepository commonCodeRepository;
     private final GroupRepository groupRepository;
 
-    //코드를 만들땐 필드값을 필수로 넣어준다 그룹은 필수 x 그룹을
+    @Override
     public void createdCode(CreateCodeRequestDto requestDto) {
         String groupName = requestDto.getGroupName();
         CommonCode commonCode = CommonCode.buildEntityFromDto(requestDto.getCodeValue(), requestDto.getKoreaName());
         if (groupName != null && !groupName.isEmpty()) {
             CodeGroup codeGroup = groupRepository.findGroupByGroupName(groupName)
-                    .orElseGet(() -> CreateAndGetGroup(groupName)
+                    .orElseGet(() -> createAndGetGroup(groupName)
                     );
             commonCode.setCodeGroup(codeGroup);
         }
         commonCodeRepository.save(commonCode);
     }
 
+    @Override
     public void createdGroup(CreateGroupRequestDto requestDto) {
         var groupName = requestDto.getGroupName();
-        CreateAndGetGroup(groupName);
+        createAndGetGroup(groupName);
     }
-
 
     @Override
     public void updateGroupName(UpdateCodeRequestDto requestDto) {
@@ -53,7 +52,7 @@ public class CommonCodeServiceImpl implements CommonCodeService {
 
         commonCodeRepository.save(code);
     }
-
+    @Override
     @Transactional(readOnly = true)
     public CodeResponseDto searchCodeByKoreanNameOrCodeValue(SearchByKoreanNameOrCodeValueDto searchDto) {
         String codeValue = searchDto.getCodeValue();
@@ -64,7 +63,7 @@ public class CommonCodeServiceImpl implements CommonCodeService {
         }
         return CodeResponseDto.toDto(code);
     }
-
+    @Override
     @Transactional(readOnly = true)
     public List<CodeResponseDto> searchCodeListByGroupName(SearchCodeListByGroupNameDto searchDto) {
         CodeGroup codeGroup = groupRepository.findGroupByGroupName(searchDto.getGroupName())
@@ -82,9 +81,9 @@ public class CommonCodeServiceImpl implements CommonCodeService {
                 .orElseThrow(()->new IllegalArgumentException("해당 코드는 존재 하지 않습니다."));
         return code;
     }
-
-    private CodeGroup CreateAndGetGroup(String groupName) {
+    private CodeGroup createAndGetGroup(String groupName) {
         CodeGroup codeGroup = CodeGroup.buildEntityFromDto(groupName);
         return groupRepository.save(codeGroup);
     }
+
 }
