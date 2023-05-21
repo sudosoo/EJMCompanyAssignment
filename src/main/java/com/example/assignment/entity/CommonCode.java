@@ -35,4 +35,5 @@ public class CommonCode {
         this.codeGroup = codeGroup;
         codeGroup.getCodeList().add(this);
     }
+
 }

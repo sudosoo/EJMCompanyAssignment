@@ -23,21 +23,15 @@ public class CommonCodeServiceImpl implements CommonCodeService {
 
     @Override
     public void createdCode(CreateCodeRequestDto requestDto) {
-        String groupName = requestDto.getGroupName();
         CommonCode commonCode = CommonCode.buildEntityFromDto(requestDto.getCodeValue(), requestDto.getKoreaName());
-        if (groupName != null && !groupName.isEmpty()) {
-            CodeGroup codeGroup = groupRepository.findGroupByGroupName(groupName)
-                    .orElseGet(() -> createAndGetGroup(groupName)
-                    );
-            commonCode.setCodeGroup(codeGroup);
-        }
         commonCodeRepository.save(commonCode);
     }
 
+
     @Override
     public void createdGroup(CreateGroupRequestDto requestDto) {
-        var groupName = requestDto.getGroupName();
-        createAndGetGroup(groupName);
+        CodeGroup group = getAndCreateGroupByGroupName(requestDto.getGroupName());
+        groupRepository.save(group);
     }
 
     @Override
@@ -45,24 +39,18 @@ public class CommonCodeServiceImpl implements CommonCodeService {
         String groupName = requestDto.getGroupName();
         CodeGroup codeGroup = groupRepository.findGroupByGroupName(groupName)
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 존재하지 않습니다: " + groupName));
-        String codeValue = requestDto.getCodeValue();
-        String koreaName = requestDto.getKoreaName();
-        CommonCode code = getEntity(koreaName, codeValue);
+        CommonCode code = getEntity(requestDto.getKoreaName(), requestDto.getCodeValue());
         code.setCodeGroup(codeGroup);
-
         commonCodeRepository.save(code);
     }
+
     @Override
     @Transactional(readOnly = true)
     public CodeResponseDto searchCodeByKoreanNameOrCodeValue(SearchByKoreanNameOrCodeValueDto searchDto) {
-        String codeValue = searchDto.getCodeValue();
-        String koreaName = searchDto.getKoreaName();
-        CommonCode code = getEntity(koreaName, codeValue);
-        if (code == null) {
-            throw new IllegalArgumentException("해당 코드는 존재하지 않습니다.");
-        }
+        CommonCode code = getEntity(searchDto.getKoreaName(), searchDto.getCodeValue());
         return CodeResponseDto.toDto(code);
     }
+
     @Override
     @Transactional(readOnly = true)
     public List<CodeResponseDto> searchCodeListByGroupName(SearchCodeListByGroupNameDto searchDto) {
@@ -78,12 +66,20 @@ public class CommonCodeServiceImpl implements CommonCodeService {
                         Specification
                                 .where(CommonCodeSpecification.hasKoreaName(koreaName))
                                 .and(CommonCodeSpecification.hasCodeValue(codeValue)))
-                .orElseThrow(()->new IllegalArgumentException("해당 코드는 존재 하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 코드는 존재 하지 않습니다: "+koreaName+codeValue));
         return code;
     }
-    private CodeGroup createAndGetGroup(String groupName) {
-        CodeGroup codeGroup = CodeGroup.buildEntityFromDto(groupName);
-        return groupRepository.save(codeGroup);
+
+    private CodeGroup getAndCreateGroupByGroupName(String groupName) {
+        return groupRepository.findGroupByGroupName(groupName)
+                .orElseGet(() -> CodeGroup.buildEntityFromDto(groupName));
     }
 
+    public CommonCode getEntityTestMethod(String koreaName, String codeValue) {
+        return getEntity(koreaName, codeValue);
+    }
+
+    public CodeGroup getAndCreateGroupByGroupNameTestMethod(String groupName) {
+        return getAndCreateGroupByGroupName(groupName);
+    }
 }

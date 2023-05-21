@@ -18,23 +18,15 @@ public class CommonCodeController {
 
     /**
      * 코드의 벨류값과 한국어 이름을 넣으면 공용코드를 생성해주는 API입니다.
-     * 그룹은 만들때 지정할 수도 있고, 그룹이 존재하지 않는다면 자동으로 그룹을 생성해서 지정 해줍니다.
      *
      * @param codeValue @NotNull 코드의 벨류값을 지정합니다
      * @param koreaName @NotNull 코드의 한국어이름을 지정합니다
-     * @param groupName @Nullable 코드의 그룹을 지정합니다
      * @return "200"
      * */
     @PostMapping("/code")
     public ResponseEntity<Void> createdCode(@Param("codeValue") String codeValue,
-                                                   @Param("koreaName") String koreaName,
-                                                   @Param("groupName") String groupName) {
-        CreateCodeRequestDto requestDto;
-        if (groupName.isEmpty()) {
-            requestDto = new CreateCodeRequestDto(codeValue, koreaName);
-        } else {
-            requestDto = new CreateCodeRequestDto(codeValue, koreaName, groupName);
-        }
+                                            @Param("koreaName") String koreaName) {
+        CreateCodeRequestDto requestDto = new CreateCodeRequestDto(codeValue, koreaName);
         commonCodeService.createdCode(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -54,7 +46,7 @@ public class CommonCodeController {
 
     /**
      * 이미 생성된 코드의 그룹을 지정 / 변경 합니다.
-     * 매개변수는 둘중 선택 가능하며 두개 다 사용도 가능한 동적 API입니다.
+     * 매개변수는 두개 중 선택 가능하며, 두개 다 사용도 가능한 동적 API입니다.
      *
      * @param codeValue @Nullable 코드의 벨류값을 검색합니다
      * @param koreaName @Nullable 코드의 한국어이름을 검색합니다
