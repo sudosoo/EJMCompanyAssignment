@@ -111,6 +111,7 @@ GET /api/group)
 - Content-Type: application/json
 
 ```json
+[
     {
         "codeValue": "123",
         "koreaName": "잭",
@@ -121,4 +122,5 @@ GET /api/group)
         "koreaName": "힐",
         "groupName": "100"
     }
+]
 ```
