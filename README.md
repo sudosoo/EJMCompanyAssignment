@@ -22,7 +22,6 @@
 Post /api/code)
 ### Description
 코드의 벨류값과 한국어이름을 넣어 공용코드를 생성해주는 API입니다.
-그룹은 코드를 생성 할때 지정할 수도 있고,해당 그룹이 존재하지 않는다면 그룹을 생성해서 지정 해줍니다.
 
 ### Parameters
 - codeValue (path parameter): 코드의 벨류값을 지정합니다
@@ -31,9 +30,6 @@ Post /api/code)
 - koreaName (path parameter): 코드의 한국어이름을 지정합니다
   - Type: String
   - Required: true
-- groupName (path parameter): 지정할 그룹을 선택합니다.
-  - Type: String
-  - Required: false
 
 ### Response
 - Status: 200 OK
